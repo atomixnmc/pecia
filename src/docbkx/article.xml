@@ -1,0 +1,616 @@
+<article>
+  <articleinfo>
+    <title><?eval ${pecia}?></title>
+    <subtitle>Towards a Fluent Interface for Building Documents</subtitle>
+    <pubdate>September 1, 2008</pubdate>
+    <author>
+      <firstname>Wilfred</firstname>
+      <surname>Springer</surname>
+    </author>
+    <keywordset>
+      <keyword>fluent interface</keyword>
+      <keyword>doxia</keyword>
+      <keyword>documentation</keyword>
+    </keywordset>
+  </articleinfo>
+  
+  <section>
+    <title>Introduction</title>
+    <para>
+      There is a chance that - after having read this article - you
+      conclude that nobody with a sane mind would ever use what this
+      article is going to suggest. Let me therefore start with
+      disclaimer: I have never made any public claims regarding my
+      mental state; you cannot hold me to that.
+    </para>
+    <para>
+      Apart from that, I figure an article about a technology almost
+      nobody is using, is still <emphasis>way</emphasis> more
+      interesting than an article <emphasis>everyone</emphasis> is
+      using. In fact, I guess the more senior you are, the more things
+      you have already seen before, the less likely it is you will be
+      you will be interested in something people already did many
+      times before. Based on that, you might as well say that the most
+      experienced people around will probably be interested in stuff
+      that nobody is using. This article is for those people.
+    </para>
+    <para>
+      With that out of the way: <?eval ${pecia}?> is a new way of
+      generating documentation from your Java applications. You will
+      probably wonder why we need yet another way of generating
+      documents from Java, and I have to admit that the Java world is
+      not in a bad shape if it comes down to the number of frameworks
+      allowing you to generate documents. However, Pecia takes another
+      stab at it, and I just had to see if it would work. You be the
+      judge whether it makes sense.
+    </para>
+  </section>
+  
+  <section>
+    <title>Background</title>
+    <para>
+      I clearly remember the day on which I spend more time than I am
+      willing to admit on finding out why my Maven report was not
+      producing well-formed HTML. Definitely not one of my finest
+      moments.
+    </para>
+    <para>
+      Maven reports are built using an API called Doxia. It's not a
+      general purpose template-based text generating mechanism, like
+      Velocity, FreeMarkers or StringTemplate. In fact, there is no
+      template at all. Instead, Doxia provides an API for building a
+      document, abstracting the final representation of that document.
+    </para>
+    <para>
+      In a way, the most important interface in Doxia is the
+      <interfacename>Sink</interfacename> interface. The
+      <interface>Sink</interface> interface is basically the builder
+      interface. It has operations to start the document body, to
+      start a section, to generate text, to start a table, a table
+      row, a table cell, and many other document chunks, and then a
+      slew of operations to finish all of those. <xref
+      linkend="example-doxia"/> shows an excerpt of some of my code
+      using Doxia.
+    </para>
+    <example id="example-doxia">
+      <title>Doxia <interfacename>Sink</interfacename> usage</title>
+      <programlisting><![CDATA[sink.body();
+sink.sectionTitle1();
+sink.text("Message Catalog");
+sink.sectionTitle1_();
+sink.table();
+sink.tableRow();
+sink.tableHeaderCell();
+sink.text("Type");
+sink.tableHeaderCell_();
+sink.tableHeaderCell();
+sink.text("Identifier");
+sink.tableHeaderCell_();
+sink.tableHeaderCell();
+sink.text("Message");
+sink.tableHeaderCell_();
+sink.tableRow_();
+...]]></programlisting>
+    </example>
+    <para>
+      Unmistakenly, there is a correspondence between the
+      <interfacename>Sink</interfacename> interface and a subset of
+      the HTML content model. However, HTML is not the only type of
+      document that can be generated from Doxia. In fact, by
+      abstracting the interface from the implementation, Doxia is
+      capable of generating any type of output document. Because of
+      that, it generates PDF just as easy as HTML.  <!-- Verify this
+      -->
+    </para>
+    <para>
+      Now, there is one limitation in the Doxia approach: you are
+      never really sure if your code is building a
+      <firstterm>valid</firstterm> document. The API does not prevent
+      you from adding an image to a table row, or inserting text in a
+      table row outside of a table cell. And since Doxia aims to
+      abstract you from the target representation, it's quite hard to
+      make any assumptions on what is or is not considered to be
+      valid.
+    </para>
+    <para>
+      This was in fact the reason why I spend so much time in
+      completing my Maven report. It turned out I was 'building' the
+      wrong type of document elements at the wrong time. The API did
+      not prevent me from doing it, and the framework did not warn me
+      at runtime. Which made me wonder....
+    </para>
+  </section>
+  
+  <section>
+    <title><?eval ${pecia}?></title>
+    <para>
+      It made me wonder if it would not be possible to enforce
+      validation at compile time. Would it not be much nicer to have
+      the <emphasis>API</emphasis> prevent me from adding images to
+      table rows, or - for instance - from adding a fourth table cell
+      to a three-column table? Would it not be much nicer if the API
+      would prevent me from making <emphasis>any</emphasis> mistakes
+      like these? And would it not be great if the API would be a
+      <firstterm>fluent</firstterm> API<footnote>
+      <para>
+        See <ulink
+        url="http://www.martinfowler.com/bliki/FluentInterface.html"/>.
+      </para>
+      </footnote>?
+    </para>
+    <para>
+      From my perspective, the answer to all of these questions was:
+      yes, that would be much nicer. It would allow me to spot errors
+      quickly, and moreover, it would make my IDE's code completion
+      assistance actually become valuable. With Doxia's
+      <interfacename>Sink</interfacename> interface, your IDE will
+      offer you the choice of adding images to a table row. In a
+      framework that enforces proper document structure through its
+      API, your IDE would never consider that to be a viable option.
+    </para>
+  </section>
+  
+  <section>
+    <title><?eval ${pecia}?> API Principles</title>
+    <section>
+      <title>Context-based</title>
+      <para>
+        The API offered by <?eval ${pecia}?> depends on on your context. This is
+        probably best explained with an example.
+      </para>
+      <example id="example-api-usage">
+        <title><?eval ${pecia}?> API Usage</title>
+        <programlisting><![CDATA[Article article = ...;
+ItemizedList list = article.itemizedList();
+list.item("first item");
+list.item("second item");]]></programlisting>
+      </example>
+      <para>
+        So what happens in the example above? Well, first you create the
+        target document. More on that later. From that point on, you can
+        add content to the Article. Once you add an itemized list, the
+        API returns an <interfacename>ItemizedList</interfacename>
+        instance, an object representation of that new context. If you
+        want to add content to the itemized list, you need to invoke
+        operations on the <interfacename>ItemizedList</interfacename>
+        instance. In this case, the example adds two items to the
+        itemized list.
+      </para>
+      <para>
+        Just like Doxia, <?eval ${pecia}?> is also backed by a number of
+        implementations of the API. At this stage, it supports both
+        DocBook and HTML output. Given the sample code given above, a
+        simple HTML implementation would generate HTML output like this:
+      </para>
+        <programlisting><![CDATA[
+<html>
+  <body>
+    <ul>
+      <li>first item</li>
+      <li>second item</li>
+    </ul>
+  </body>
+</html>]]></programlisting>
+    </section>
+    <section>
+      <title>Method Chaining</title>
+    <para>
+      Now, <link linkend="example-api-usage">the example given above</link>
+      is <emphasis>not really</emphasis> illustrative for the way you
+      would write code with <?eval ${pecia}?>. With method chaining,
+      you can create the document without declaring variables to hold
+      every intermediate content model element, and create a interface
+      that bears a greater similarity with the way you would normally
+      create documents in markup languages in, say, HTML or
+      DocBook. Let us just say, a more <firstterm>fluent</firstterm>
+      interface. So instead of writing the code given above, in the
+      previous chapter, you can write code like this:
+    </para>
+    <example>
+      <title>Method chaining</title>
+    <programlisting><![CDATA[
+Article article = ...;
+article.itemizedList()
+  .item("first item")
+  .item("second item");]]></programlisting>
+    </example>
+    </section>
+    <section>
+      <title>Shorthand Notations</title>
+      <para>
+        This is another sample document:
+      </para>
+      <example>
+        <title>Mixed 'Expanded' and Shorthand Notations</title>
+    <programlisting><![CDATA[
+article
+  .author("Wilfred Springer")
+  .copyright("agilejava.com", 2008)
+  .para()
+    .text("This is the ")
+    .emphasis("first")
+    .text(" paragraph.")
+  .end()
+  .para("And this is the second.")
+.end()]]></programlisting>
+      </example>
+      <para>
+      Which will generate something similar to this:
+    </para>
+    <programlisting><![CDATA[
+<html>
+  <body>
+    <p>This is the <em>first</em> paragraph.</p>
+    <p>And this is the second.</p>
+  </body>
+</html>]]></programlisting>
+    <para>
+      The important principle illustrated here is that <?eval ${pecia}?>
+      both has shorthand notations as well as more verbose notations
+      for specifying content. The simple
+      <methodname>para(String)</methodname> operation (illustrated by
+      the second paragraph in the example) starts the paragraph, adds
+      text to it and closes the paragraph. So, it basically expands to
+      this:
+    </para>
+    <programlisting><![CDATA[
+.para()
+  .text("And this is the second.")
+.end()]]></programlisting>
+    <para>
+      The principle does not only apply to paragraphs. It also applies
+      to other document elements, such as list items, table cells and
+      footnotes. In all of these cases, you can add that document
+      element using a simple operation accepting a String with the
+      text to be embedded within that document element,
+      <emphasis>or</emphasis> by calling an operation
+      <emphasis>without</emphasis> any arguments, which will change
+      the context into the context of that document element. 
+    </para>
+    <para>
+      Let's take an API snippet as an example. <xref
+      linkend="example-adding-footnotes"/> shows the signature of some
+      operations on <interfacename>Para</interfacename>, the interface
+      implemented by paragraphs. As you can see, there are two
+      different footnote operations. They are different in a number of
+      ways.
+    </para>
+    <para>
+      First of all, the first one takes a String argument, and the
+      second does not. The first operation will create footnote, add a
+      paragraph, and add text to the paragraph in a single call. Once
+      it is done, the entire footnote is considered to be done. The
+      context is no longer the footnote that was just added the
+      paragraph. The context is - again - the paragraph itself.
+    </para>
+    <example id="example-adding-footnotes">
+      <title><?eval ${pecia}?> API Snippet</title>
+      <programlisting><![CDATA[interface Para<T> {
+  ...
+  Para<T> footnote(String text);
+  Footnote<? extends Para<T>> footnote();
+  ...
+}]]></programlisting>
+    </example>
+    <para>
+      The other <methodname>footnote</methodname> operation does
+      <emphasis>not</emphasis> take a String argument. The API assumes
+      you are not interested in adding an empty footnote (why would
+      you?), and changes the current context into the context of the
+      footnote. From that point on, you can only invoke operations
+      defined by the <interfacename>Footnote</interfacename>
+      interface, until you finally consider yourself to be done with
+      the footnote and call its <methodname>end()</methodname>
+      operation, which will restore the original context.
+    </para>
+    </section>
+    <section>
+      <title>Tables</title>
+      <para>
+        Tables deserve some special attention. In order to preseverve
+        a valid document structure, you not only want to restrict
+        table cells to table rows; you also need to make sure that
+        every row contains <emphasis>exactly</emphasis> the same
+        number of cells. 
+      </para>
+      <para>
+        Enforcing this property of tables proved to be
+        challenging. Before going into details, let us first look at
+        an example:
+      </para>
+      <example id="example-table">
+        <title>A table in <?eval ${pecia}?></title>
+        <programlisting><![CDATA[article.table2Cols()
+  .header()
+    .entry().para("col1")
+    .entry().para("col2")
+  .end()
+  .row()
+    .entry().para("foo")
+    .entry().para("bar")
+  .end()
+  .row()
+    .entry().para("foo")
+    .entry().para("bar")
+  .end()
+.end();]]></programlisting>
+      </example>
+      <para>
+        <xref linkend="example-table"/> illustrates how to build a
+        table that more or less corresponds to this HTML table:
+      </para>
+      <programlisting><![CDATA[<table>
+  <tr>
+    <th><p>col1</p></th>
+    <th><p>col2</p></th>
+  </tr>
+  <tr>
+    <td><p>foo</p></td>
+    <td><p>bar</p></td>
+  </tr>
+  <tr>
+    <td><p>foo</p></td>
+    <td><p>bar</p></td>
+  </tr>
+</table>]]></programlisting>
+      <para>
+        So what exactly is happening in <xref
+        linkend="example-table"/>? Well, first the
+        <methodname>table2Cols()</methodname> operation constructs a
+        table of two columns. The object getting created will allow
+        only operations on tables of two columns.
+      </para>
+      <para>
+        The first thing we do after that, is adding a table header, by
+        calling <methodname>header()</methodname> on the table. Since
+        it is a two column table, the header accepts only two
+        cells. Any attempt to add more or less then those two cells
+        will give compilation errors.
+      </para>
+      <para>
+        Every table cell is getting constructed by calling
+        <methodname>entry()</methodname>. The resulting context is a
+        table cell. There are a number of things you can add to a
+        table cell, such as paragraphs. Once you are done with the
+        cell, you either call <methodname>entry()</methodname> or
+        <methodname>end()</methodname>. Calling
+        <methodname>entry()</methodname> will create the next table
+        cell. Calling <methodname>end()</methodname> will mark the end
+        of the current table header. And because of the way <?eval
+        ${pecia}?> has been constructed, you can only call
+        <methodname>end()</methodname> after the last table cell, and
+        only call <methodname>entry()</methodname> before the last
+        table cell.
+      </para>
+      <para>
+        Table header are added in <emphasis>exactly</emphasis> the
+        same way as table rows; only in this case you call
+        <methodname>row()</methodname> instead of
+        <methodname>header()</methodname>.
+      </para>
+    </section>
+    
+    <section>
+      <title>Metadata</title>
+      <para>
+        Some document elements can have metadata associated to it; it
+        often involves data that is not necessarily part of the main
+        document flow. In cases like those, <?eval ${pecia}?> allows
+        you to specify metadata at the start of the document element
+        to which it is pertaining.
+      </para>
+      <para>
+        Let us take an article as an example. An article can have an
+        author. At the beginning of an article, before adding any
+        content to the article, you can add metadata like the author's
+        name. Once you have started adding content to the article, it
+        is impossible to add any more metadata. <xref
+        linkend="example-article-metadata"/> shows you a valid way of
+        using it. <xref linkend="example-invalid-article-metadata"/>
+        illustrates an invalid way of specifying metadata; the
+        compiler will <emphasis>not</emphasis> accept any more
+        metadata <emphasis>after</emphasis> content has been added to
+        it.
+      </para>
+      <example id="example-article-metadata">
+        <title>Article metadata</title>
+        <programlisting><![CDATA[
+article
+  .author()
+    .firstname("Wilfred")
+    .surname("Springer")
+  .end()
+  .para("This is the first paragraph.");
+        ]]></programlisting>
+      </example>
+      <example id="example-invalid-article-metadata">
+        <title>Illegal article metadata</title>
+        <programlisting>
+article
+  .para("This is the first paragraph.")
+<emphasis>  .author()
+    .firstname("Wilfred")
+    .surname("Springer")
+ .end()</emphasis>
+        </programlisting>
+      </example>
+    </section>
+
+  </section>
+
+  <section>
+    <title>Using <?eval ${pecia}?></title>
+    <para>
+      In the previous section, you have seen most of the basic
+      principles behind <?eval ${pecia}?>. However, you have not
+      really seen how you actually make sure that some output document
+      is generated as a result. That was done deliberately. The
+      important thing here is the API outlined above. How you actually
+      get your hands on an actual implementation, and how that
+      implementation will treat handle the documents you are building
+      is implementation specific.
+    </para>
+    <para>
+      Fortunately, <?eval ${pecia}?> <emphasis>does</emphasis> come
+      with an implementation. So this is how you use the
+      implementation:
+    </para>
+    <example id="example-implementation">
+      <title>Producing HTML</title>
+      <programlisting><![CDATA[
+// The standard implementation uses a wrapper around STaX to 
+// produce XML documents.
+XmlWriter writer = new StreamingXmlWriter(...);
+
+// The DocumentBuilder will actually produce the output.
+DocumentBuilder builder = new HtmlDocumentBuilder(writer);
+
+// But if we are building documents, we need to have an 
+// implementation of the interfaces mentioned above. Let's wrap
+// the DocumentBuilder in an Article implementation. (The 
+// second argument is the Article's title.)
+ArticleDocument document = 
+  new DefaultArticleDocument(builder, "Example");
+
+// ... and now we can build the document.
+document
+  .section("First section")
+    .section("First subsection")
+    .end()
+  .end()
+.end();
+      ]]></programlisting>
+    </example>
+    <para>
+      The standard Pecia implementation will generate the output on
+      the fly. Technically, there is nothing preventing you from
+      creating the entire document in memory first, and generating
+      output afterwards. So all of this is all just implementation. In
+      fact, I suspect some significant changes in the implementation,
+      somewhere in the future; use this implementation at your own
+      risk.
+    </para>
+  </section>
+
+  <section>
+    <title><?eval ${pecia}?> State</title>
+    <para>
+      After having read the previous section, you probably already
+      guessed that Pecia is not done yet. It <emphasis>is</emphasis>
+      usable, and it <emphasis>is</emphasis> actually in use in one of
+      my projects, but there is still work left to be done. So this
+      article is in a way covers an alpha version of the API.
+    </para>
+  </section>
+
+  <section>
+    <title><?eval ${pecia}?> Document Object Model</title>
+    <para>
+      The document object model supported by <?eval ${pecia}?> today
+      is fairly simple. In fact, it is probably
+      <emphasis>way</emphasis> too simple. Which is another reason why
+      <?eval ${pecia}?> there is no 1.0 version of <?eval ${pecia}?>
+      yet.
+    </para>
+    <figure id="fig-dom">
+      <title><?eval ${pecia}?> Document Object Model</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="dom.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+      <xref linkend="fig-dom"/> provides a schematic overview of the
+      document object model supported. The arrows denote potential
+      containment relationships: a list item can contain paragraphs,
+      sections can contain tables, lists, verbatim content and other
+      sections, etc. The document elements supported are pretty
+      self-explanatory. The only exception may be
+      <classname>xref</classname>, which represents an internal
+      reference to another part of the document.
+    </para>
+  </section>
+
+  <section>
+    <title>Summary &amp; Conclusions</title>
+    <para>
+      In this article, I have tried to justify the creation of yet
+      another framework for generating documentation. It grew out of
+      unease with the existing solutions, and then turned to have a
+      couple of interesting side effects. <?eval ${pecia}?> not only
+      prevents you from breaking the document structure in the
+      documents you generate <firstterm>at compile time</firstterm>,
+      but also supports the IDE in preventing you to make these errors
+      altogether, at coding time.
+    </para>
+    <para>
+      In fact, there are some benefits that I haven't even covered
+      yet. They might be less tangible, but nevertheless, very
+      real. I started to see that benefit when applying <?eval
+      ${pecia}?> in a project where I had 40-something small objects
+      floating around, each of which needed to be represented
+      differently in my document, depending on the context. 
+    </para>
+    <para>
+      In situations like those, many of the existing frameworks
+      commonly in use for generating documents will force you have all
+      of these 40-something objects expose their state to the outside
+      world, in order to be able to bind to it from an external
+      template. 
+    </para>
+    <para>
+      However, this violates one of the most important principles of
+      object orientation: the encapsulation principle. By having the
+      objects expose their entire state to the outer world, you have
+      actually increased the dependencies between the outer world and
+      the object's implementation, and instead of defining behaviour
+      as part of the object, the behaviour (how to represent itself)
+      is externalized <emphasis>entirely</emphasis>. Consequently,
+      maintaining the templates becomes a nightmare; your templates
+      need to have a deep understanding of the internals of all
+      objects.
+    </para>
+    <para>
+      Doxia would already allow you to take a different approach: you
+      could potentially define a common interface on all objects
+      allowing each object to render itself using the
+      <interfacename>Sink</interfacename> interface. However, how
+      would you convey the context in which the content needs to be
+      written? How would you make sure that your object understands
+      that it needs to display itself as part of a paragraph. Or as a
+      table? How do you make sure that the object does not write
+      outside of the context expected by the calling program?
+    </para>
+    <programlisting><![CDATA[
+void render(Sink sink) {
+  // doh, how would I know if I am in a paragraph or table context
+}
+    ]]></programlisting>
+    <para>
+      In Doxia, there is no way of solving this. In <?eval ${pecia}?>,
+      this is trivial. The common interface would simply define a
+      single operation for each context in which the object needs to
+      render itself:
+    </para>
+    <programlisting><![CDATA[
+void render(Para<?> para) {
+  // ah, I need to render it as part of a paragraph
+  // end there is no way of writing outside of that context.
+}]]></programlisting>
+    <para>
+      Which is only to say: there does seem to be a case for
+      frameworks like <?eval ${pecia}?>. True, the current incarnation
+      of <?eval ${pecia}?> is still quite young, and there are
+      definitely things that will change in due time, but I have come
+      to believe that it has potential, and I hope to have convinced
+      you about that too. 
+    </para>
+    <para>
+      Pecia is currently hosted at SourceForge (<?eval
+      ${project.url}?>).
+    </para>
+  </section>
+
+
+</article>
