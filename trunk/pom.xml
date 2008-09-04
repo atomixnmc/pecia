@@ -22,8 +22,8 @@
     compile-time validation of the document structure.
   </description>
   <scm>
-    <connection>scm:svn:svn://gangsta/repository/pecia/trunk</connection>
-    <developerConnection>scm:svn:svn://gangsta/repository/pecia/trunk</developerConnection>
+    <connection>scm:svn:https://pecia.svn.sourceforge.net/svnroot/pecia/trunk</connection>
+    <developerConnection>scm:svn:https://pecia.svn.sourceforge.net/svnroot/pecia/trunk</developerConnection>
   </scm>
   <dependencies>
     <dependency>
@@ -164,4 +164,12 @@
       <url>scp://shell.sourceforge.net/home/groups/p/pe/pecia/htdocs</url>
     </site>
   </distributionManagement>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
