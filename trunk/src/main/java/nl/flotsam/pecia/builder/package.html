@@ -10,29 +10,29 @@
 <body>
 <p>The package providing the interfaces to be implemented by
 classes responsible for generating content. The
-<code>com.tomtom.pecia</code> package provides the interfaces seen
+<code>nl.flotsam.pecia</code> package provides the interfaces seen
 by clients from the outside. This package provides the interfaces
 that need to be understood by anone interested in generating a
 particular type of output format. (That is, this is just the basis
 of an implementation. You are of course free to implement the API
-provided by <code>com.tomtom.pecia</code> in any way you like.)</p>
+provided by <code>nl.flotsam.pecia</code> in any way you like.)</p>
 
 <p>The basic idea behind the default implementation is to construct
-instances of {@link com.tomtom.pecia.DocumentElement
+instances of {@link nl.flotsam.pecia.DocumentElement
 DocumentElements} on the fly, by having them constructed by the
-{@link com.tomtom.pecia.builder.DocumentBuilder DocumentBuilder}.
-For every {@link com.tomtom.pecia.DocumentElement DocumentElement},
+{@link nl.flotsam.pecia.builder.DocumentBuilder DocumentBuilder}.
+For every {@link nl.flotsam.pecia.DocumentElement DocumentElement},
 this factory needs to be able to construct a dedicated builder
 instance. The builder implementation is expected to build the
 actual output document.</p>
 
 <p>Whenever you feel the need to build another kind of output
 format, I suggest you start with the basic implementation of the
-{@link com.tomtom.pecia.builder.base.DefaultDocumentBuilder
+{@link nl.flotsam.pecia.builder.base.DefaultDocumentBuilder
 DefaultDocumentBuilder}, and override the operations that are
 actually expected to generate relevant output. You might also
 consider subclassing the existing {@link
-com.tomtom.pecia.builder.base.DefaultDocumentBuilder
+nl.flotsam.pecia.builder.base.DefaultDocumentBuilder
 DefaultDocumentBuilder} sublclasses found in the docbook and html
 packages. Again, you probably would only be required to override
 some operations, and not all of them.</p>
