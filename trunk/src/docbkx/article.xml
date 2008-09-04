@@ -57,7 +57,7 @@
     <para>
       Maven reports are built using an API called Doxia. It's not a
       general purpose template-based text generating mechanism, like
-      Velocity, FreeMarkers or StringTemplate. In fact, there is no
+      Velocity, FreeMarker or StringTemplate. In fact, there is no
       template at all. Instead, Doxia provides an API for building a
       document, abstracting the final representation of that document.
     </para>
@@ -93,7 +93,7 @@ sink.tableRow_();
 ...]]></programlisting>
     </example>
     <para>
-      Unmistakenly, there is a correspondence between the
+      Unmistakeably, there is a correspondence between the
       <interfacename>Sink</interfacename> interface and a subset of
       the HTML content model. However, HTML is not the only type of
       document that can be generated from Doxia. In fact, by
@@ -307,7 +307,7 @@ article
     <section>
       <title>Tables</title>
       <para>
-        Tables deserve some special attention. In order to preseverve
+        Tables deserve some special attention. In order to preserve
         a valid document structure, you not only want to restrict
         table cells to table rows; you also need to make sure that
         every row contains <emphasis>exactly</emphasis> the same
