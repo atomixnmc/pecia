@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    </head>
+    <body>
+      <p>
+        Pecia is a framework for generating documents. For people
+        familiar with Doxia: think Doxia with compile time
+        validation. Just like Doxia, Pecia is intended to provide an
+        abstraction of several output document types. Just like Doxia,
+        it allows you to build the entire document using an API, as
+        opposed to first generate XML and then turn that into your
+        desired output format.
+      </p>
+      <p>
+	There are however also differences. Big differences. For
+	instance:
+      </p>
+      <ul>
+	<li>
+	  <p>
+	    The Pecia API works very hard to enforce the document
+	    structure. Doxia allows you to build documents that are
+	    completely out of whack. For instance, it allows you to
+	    add table cells directly to paragraphs. Because of that,
+	    people tend to use the Doxia API without actually knowing
+	    what Doxia is expecting, or without understanding how
+	    Doxia is expected to respond to the API calls. This in
+	    turn often results in some output formats failing, and
+	    other - more loosely defined output formats - succeeding.
+	  </p>
+	  <p>
+	    Pecia is different. If you obtain a reference to a {@link
+	    com.tomtom.pecia.Document Document} object, and create a
+	    paragraph by invoking {@link
+	    com.tomtom.pecia.Contents#para() para()} on it, you get a
+	    {@link com.tomtom.pecia.Para Para} element allowing you to
+	    add paragraph specific content only. No table cells
+	    allowed.
+	  </p>
+	</li>
+	<li>
+	  <p>
+	    Pecia allows you to chain operations, in a - let's just
+	    say - DSL-alike way. To produce a itemized list,
+	    containing two list items, each one containing an
+	    emphasized piece of text, you could code something like
+	    this:
+	  </p>
+	  <pre>
+document.itemizedList()
+    .item()
+        .para().emphasis("yes sir!").end()
+    .end()
+    .item()
+        .para().emphasis("no mam!").end()
+    .end()
+.end();
+	  </pre>
+	  <p>
+	    The thing to not here is that the if you outline your code
+	    carefully, it will actually be remarkably clear, and
+	    really look a lot like DocBook XML.
+	  </p>
+	</li>
+	<li>
+	  <p>
+	    The Pecia API intentionally resembles the DocBook document
+	    structure. Let's just say that - at this stage - it
+	    supports a simplified version of <a
+	    href="http://www.docbook.org/schemas/simplified">Simplified
+	    DocBook</a>.
+	  </p>
+	</li>
+	<li>
+	  <p>
+	    The Pecia API is very IDE-friendly: Code-completion and
+	    mouse-over hints provide valuable information on where you
+	    are in your document, as the example below shows.
+	  </p>
+	  <img border="1" src="doc-files/pecia-eclipse.png"/>
+	  <p>
+	    Notice that the IDE tells you <em>exactly</em> where you
+	    are, when you ask for code completion. In this case, it
+	    suggests to complete <code>p</code> to
+	    <code>para()</code>, <i>an operation on Para of Section of
+	    Section of Section of Document</i>. Mouse-over hints
+	    basically provide similar information. 
+	  </p>
+	</li>
+      </ul>
+    </body>
+  </html>
