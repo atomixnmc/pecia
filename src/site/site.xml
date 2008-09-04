@@ -8,6 +8,8 @@
 
   <body>
 
+    <menu name="Downloads" 
+          href="http://sourceforge.net/project/showfiles.php?group_id=238407"/>
     <menu ref="modules"/>
     <menu ref="reports"/>
     
