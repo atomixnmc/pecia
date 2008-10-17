@@ -114,5 +114,12 @@ public interface ParaContents<T> {
      *            The term itself.
      */
     Para<T> term(Object id, String text);
+    
+    /**
+     * Generates documentation, and returns the current context.
+     * 
+     * @param target The object generating the documentation.
+     */
+    Para<T> document(Documenter<ParaContents<?>> target);
 
 }

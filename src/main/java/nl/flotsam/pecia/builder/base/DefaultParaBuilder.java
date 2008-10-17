@@ -16,8 +16,10 @@
 
 package nl.flotsam.pecia.builder.base;
 
+import nl.flotsam.pecia.Documenter;
 import nl.flotsam.pecia.Footnote;
 import nl.flotsam.pecia.Para;
+import nl.flotsam.pecia.ParaContents;
 import nl.flotsam.pecia.builder.DocumentBuilder;
 import nl.flotsam.pecia.builder.ParaBuilder;
 
@@ -66,6 +68,11 @@ public class DefaultParaBuilder<T> extends AbstractBuilder<T> implements ParaBui
 
     public Para<T> footnote(String text) {
         getBuilder().createFootnote(this, getBuilder()).start().para().text(text).end().end();
+        return this;
+    }
+
+    public Para<T> document(Documenter<ParaContents<?>> target) {
+        target.document(this);
         return this;
     }
 
