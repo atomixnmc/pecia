@@ -1,18 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>pecia</name>
-	<comment>A more structured alternative for Doxia. Allows you to build
-    documents using a Java API.</comment>
-	<projects>
-	</projects>
-	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-	</buildSpec>
-	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-	</natures>
+  <name>pecia</name>
+  <comment>A framework for building structured documentation, with
+    compile-time validation of the document structure.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
 </projectDescription>
