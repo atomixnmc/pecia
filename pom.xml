@@ -151,12 +151,12 @@
     <repository>
       <id>pecia-sourceforge</id>
       <name>Pecia Repository</name>
-      <url>scp://shell.sourceforge.net/home/groups/p/pe/pecia/htdocs/repository</url>
+      <url>sftp://web.sourceforge.net/home/groups/p/pe/pecia/htdocs/repository</url>
     </repository>
     <snapshotRepository>
       <id>pecia-sourceforge</id>
       <name>Pecia Snapshot Repository</name>
-      <url>scp://shell.sourceforge.net/home/groups/p/pe/pecia/htdocs/snapshots</url>
+      <url>sftp://web.sourceforge.net/home/groups/p/pe/pecia/htdocs/snapshots</url>
     </snapshotRepository>
     <site>
       <id>pecia-sourceforge</id>
