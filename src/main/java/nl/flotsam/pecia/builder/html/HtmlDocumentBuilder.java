@@ -113,7 +113,7 @@ public class HtmlDocumentBuilder extends XmlDocumentBuilder {
 
     @Override
     public <T> ParaBuilder<T> createPara(T parent, DocumentBuilder builder) {
-        return new HtmlParaBuilder<T>(builder, parent, getLifecycleListener());
+        return new HtmlParaBuilder<T>(builder, parent, getLifecycleListener(), getWriter());
     }
 
     @Override
@@ -179,16 +179,23 @@ public class HtmlDocumentBuilder extends XmlDocumentBuilder {
 
     }
 
-    public class HtmlParaBuilder<T> extends DefaultParaBuilder<T> {
+    public static class HtmlParaBuilder<T> extends DefaultParaBuilder<T> {
 
+        private XmlWriter xmlWriter;
+        
         public HtmlParaBuilder(DocumentBuilder builder, T parent,
-                LifecycleListener listener) {
+                LifecycleListener listener, XmlWriter xmlWriter) {
             super(builder, parent, listener);
+            this.xmlWriter = xmlWriter;
         }
 
+        private XmlWriter getWriter() {
+            return xmlWriter;
+        }
+        
         @Override
         public Para<T> code(String text) {
-            writeInline("code", text);
+            writeInline("code", text, xmlWriter);
             return HtmlParaBuilder.this;
         }
 
@@ -212,7 +219,7 @@ public class HtmlDocumentBuilder extends XmlDocumentBuilder {
 
         @Override
         public Para<T> emphasis(String text) {
-            writeInline("em", text);
+            writeInline("em", text, xmlWriter);
             return HtmlParaBuilder.this;
         }
 
