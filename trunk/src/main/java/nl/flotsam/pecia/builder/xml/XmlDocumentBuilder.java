@@ -19,6 +19,7 @@ package nl.flotsam.pecia.builder.xml;
 import nl.flotsam.pecia.builder.base.DefaultDocumentBuilder;
 import nl.flotsam.pecia.builder.base.LifecycleListener;
 
+
 public class XmlDocumentBuilder extends DefaultDocumentBuilder {
 
     private XmlWriter writer;
@@ -32,11 +33,16 @@ public class XmlDocumentBuilder extends DefaultDocumentBuilder {
         return writer;
     }
 
-    public final void writeInline(String localName, String text)
-            throws XmlWriterException {
+    public final void writeInline(String localName, String text) throws XmlWriterException {
         getWriter().writeStartElement(localName);
         getWriter().writeCharacters(text);
         getWriter().writeEndElement();
+    }
+
+    public final static void writeInline(String localName, String text, XmlWriter xmlWriter) throws XmlWriterException {
+        xmlWriter.writeStartElement(localName);
+        xmlWriter.writeCharacters(text);
+        xmlWriter.writeEndElement();
     }
 
     private static class XmlLifecycleListener implements LifecycleListener {
