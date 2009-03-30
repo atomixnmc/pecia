@@ -24,7 +24,7 @@ package nl.flotsam.pecia;
  * @param <T>
  *            The type of the next entry. (Either {@link Entry} or {@link LastEntry}.)
  */
-public interface Entry<T> {
+public interface Entry<T> extends SimpleContents<Entry<T>> {
 
     /**
      * Creates a paragraph.
