@@ -20,8 +20,10 @@ import nl.flotsam.pecia.AnnotatedArticle;
 import nl.flotsam.pecia.AnnotatedSection;
 import nl.flotsam.pecia.Article;
 import nl.flotsam.pecia.Author;
+import nl.flotsam.pecia.Documenter;
 import nl.flotsam.pecia.ItemizedList;
 import nl.flotsam.pecia.Para;
+import nl.flotsam.pecia.SimpleContents;
 import nl.flotsam.pecia.Table2Cols;
 import nl.flotsam.pecia.Table3Cols;
 import nl.flotsam.pecia.Table4Cols;
@@ -170,6 +172,11 @@ public class DefaultArticleBuilder<T> extends AbstractBuilder<T> implements
 
     public Article<T> para(String text) {
         getBuilder().createPara(this, getBuilder()).start().text(text).end();
+        return this;
+    }
+
+    public Article<T> document(Documenter<SimpleContents<?>> target) {
+        target.document(this);
         return this;
     }
 }

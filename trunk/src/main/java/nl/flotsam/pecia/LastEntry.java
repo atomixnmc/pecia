@@ -24,7 +24,7 @@ package nl.flotsam.pecia;
  * @param <T>
  *            The type of the parent container element.
  */
-public interface LastEntry<T> {
+public interface LastEntry<T> extends SimpleContents<LastEntry<T>> {
 
     /**
      * Adds a paragraph to the current table entry.

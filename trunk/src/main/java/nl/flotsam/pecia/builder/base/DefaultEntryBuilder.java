@@ -16,8 +16,16 @@
 
 package nl.flotsam.pecia.builder.base;
 
+import nl.flotsam.pecia.Documenter;
 import nl.flotsam.pecia.Entry;
+import nl.flotsam.pecia.ItemizedList;
 import nl.flotsam.pecia.Para;
+import nl.flotsam.pecia.SimpleContents;
+import nl.flotsam.pecia.Table2Cols;
+import nl.flotsam.pecia.Table3Cols;
+import nl.flotsam.pecia.Table4Cols;
+import nl.flotsam.pecia.Table5Cols;
+import nl.flotsam.pecia.Verbatim;
 import nl.flotsam.pecia.builder.DocumentBuilder;
 import nl.flotsam.pecia.builder.EntryBuilder;
 import nl.flotsam.pecia.builder.Initializer;
@@ -56,6 +64,39 @@ public class DefaultEntryBuilder<T> extends AbstractBuilder<T> implements
 
     public Entry<T> para(String text) {
         getBuilder().createPara(this, getBuilder()).text(text).end();
+        return this;
+    }
+
+    public ItemizedList<? extends Entry<T>> itemizedList() {
+        return getBuilder().createItemizedList(this, getBuilder());
+    }
+
+    public ItemizedList<? extends Entry<T>> orderedList() {
+        return getBuilder().createOrderedList(this, getBuilder()).start();
+    }
+
+    public Table2Cols<? extends Entry<T>> table2Cols() {
+        return getBuilder().createTable2Cols(this, getBuilder()).start();
+    }
+
+    public Table3Cols<? extends Entry<T>> table3Cols() {
+        return getBuilder().createTable3Cols(this, getBuilder()).start();
+    }
+
+    public Table4Cols<? extends Entry<T>> table4Cols() {
+        return getBuilder().createTable4Cols(this, getBuilder()).start();
+    }
+
+    public Table5Cols<? extends Entry<T>> table5Cols() {
+        return getBuilder().createTable5Cols(this, getBuilder()).start();
+    }
+
+    public Verbatim<? extends Entry<T>> verbatim() {
+        return getBuilder().createVerbatim(this, getBuilder()).start();
+    }
+
+    public Entry<T> document(Documenter<SimpleContents<?>> target) {
+        target.document(this);
         return this;
     }
 
