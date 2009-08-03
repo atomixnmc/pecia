@@ -63,7 +63,7 @@
     </para>
     <para>
       In a way, the most important interface in Doxia is the
-      <interfacename>Sink</interfacename> interface. The
+      Sink interface. The
       <interface>Sink</interface> interface is basically the builder
       interface. It has operations to start the document body, to
       start a section, to generate text, to start a table, a table
@@ -73,7 +73,7 @@
       using Doxia.
     </para>
     <example id="example-doxia">
-      <title>Doxia <interfacename>Sink</interfacename> usage</title>
+      <title>Doxia Sink usage</title>
       <programlisting><![CDATA[sink.body();
 sink.sectionTitle1();
 sink.text("Message Catalog");
@@ -94,7 +94,7 @@ sink.tableRow_();
     </example>
     <para>
       Unmistakeably, there is a correspondence between the
-      <interfacename>Sink</interfacename> interface and a subset of
+      Sink interface and a subset of
       the HTML content model. However, HTML is not the only type of
       document that can be generated from Doxia. In fact, by
       abstracting the interface from the implementation, Doxia is
@@ -143,7 +143,7 @@ sink.tableRow_();
       yes, that would be much nicer. It would allow me to spot errors
       quickly, and moreover, it would make my IDE's code completion
       assistance actually become valuable. With Doxia's
-      <interfacename>Sink</interfacename> interface, your IDE will
+      Sink interface, your IDE will
       offer you the choice of adding images to a table row. In a
       framework that enforces proper document structure through its
       API, your IDE would never consider that to be a viable option.
@@ -169,10 +169,10 @@ list.item("second item");]]></programlisting>
         So what happens in the example above? Well, first you create the
         target document. More on that later. From that point on, you can
         add content to the Article. Once you add an itemized list, the
-        API returns an <interfacename>ItemizedList</interfacename>
+        API returns an ItemizedList
         instance, an object representation of that new context. If you
         want to add content to the itemized list, you need to invoke
-        operations on the <interfacename>ItemizedList</interfacename>
+        operations on the ItemizedList
         instance. In this case, the example adds two items to the
         itemized list.
       </para>
@@ -248,7 +248,7 @@ article
       The important principle illustrated here is that <?eval ${pecia}?>
       both has shorthand notations as well as more verbose notations
       for specifying content. The simple
-      <methodname>para(String)</methodname> operation (illustrated by
+      para(String) operation (illustrated by
       the second paragraph in the example) starts the paragraph, adds
       text to it and closes the paragraph. So, it basically expands to
       this:
@@ -270,7 +270,7 @@ article
     <para>
       Let's take an API snippet as an example. <xref
       linkend="example-adding-footnotes"/> shows the signature of some
-      operations on <interfacename>Para</interfacename>, the interface
+      operations on Para, the interface
       implemented by paragraphs. As you can see, there are two
       different footnote operations. They are different in a number of
       ways.
@@ -293,14 +293,14 @@ article
 }]]></programlisting>
     </example>
     <para>
-      The other <methodname>footnote</methodname> operation does
+      The other footnote operation does
       <emphasis>not</emphasis> take a String argument. The API assumes
       you are not interested in adding an empty footnote (why would
       you?), and changes the current context into the context of the
       footnote. From that point on, you can only invoke operations
-      defined by the <interfacename>Footnote</interfacename>
+      defined by the Footnote
       interface, until you finally consider yourself to be done with
-      the footnote and call its <methodname>end()</methodname>
+      the footnote and call its end()
       operation, which will restore the original context.
     </para>
     </section>
@@ -356,37 +356,36 @@ article
       <para>
         So what exactly is happening in <xref
         linkend="example-table"/>? Well, first the
-        <methodname>table2Cols()</methodname> operation constructs a
+        table2Cols() operation constructs a
         table of two columns. The object getting created will allow
         only operations on tables of two columns.
       </para>
       <para>
         The first thing we do after that, is adding a table header, by
-        calling <methodname>header()</methodname> on the table. Since
+        calling header() on the table. Since
         it is a two column table, the header accepts only two
         cells. Any attempt to add more or less then those two cells
         will give compilation errors.
       </para>
       <para>
         Every table cell is getting constructed by calling
-        <methodname>entry()</methodname>. The resulting context is a
+        entry(). The resulting context is a
         table cell. There are a number of things you can add to a
         table cell, such as paragraphs. Once you are done with the
-        cell, you either call <methodname>entry()</methodname> or
-        <methodname>end()</methodname>. Calling
-        <methodname>entry()</methodname> will create the next table
-        cell. Calling <methodname>end()</methodname> will mark the end
+        cell, you either call entry() or
+        end(). Calling
+        entry() will create the next table
+        cell. Calling end() will mark the end
         of the current table header. And because of the way <?eval
         ${pecia}?> has been constructed, you can only call
-        <methodname>end()</methodname> after the last table cell, and
-        only call <methodname>entry()</methodname> before the last
+        end() after the last table cell, and
+        only call entry() before the last
         table cell.
       </para>
       <para>
         Table header are added in <emphasis>exactly</emphasis> the
-        same way as table rows; only in this case you call
-        <methodname>row()</methodname> instead of
-        <methodname>header()</methodname>.
+        same way as table rows; only in this case you call row()
+        instead of header().
       </para>
     </section>
     
@@ -527,7 +526,7 @@ document
       sections can contain tables, lists, verbatim content and other
       sections, etc. The document elements supported are pretty
       self-explanatory. The only exception may be
-      <classname>xref</classname>, which represents an internal
+      xref, which represents an internal
       reference to another part of the document.
     </para>
   </section>
@@ -575,7 +574,7 @@ document
       Doxia would already allow you to take a different approach: you
       could potentially define a common interface on all objects
       allowing each object to render itself using the
-      <interfacename>Sink</interfacename> interface. However, how
+      Sink interface. However, how
       would you convey the context in which the content needs to be
       written? How would you make sure that your object understands
       that it needs to display itself as part of a paragraph. Or as a

@@ -60,6 +60,19 @@ public class HtmlDocumentBuilderTest extends TestCase {
             .end()
        .end();
     }
+    
+    public void testSample() {
+        doc.section("Introduction")
+                .para()
+                    .text("This is a document. Make sure you also check out the ")
+                    .emphasis("next").text(" section.")
+                .end()
+           .end()
+           .section("Conclusion")
+               .para("That's all folks.")
+           .end()
+       .end();
+    }
 
     public void testWithFootnote() {
         System.out.println();
