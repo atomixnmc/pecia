@@ -61,7 +61,7 @@
 	<artifactId>maven-release-plugin</artifactId>
 	<configuration>
 	  <goals>deploy</goals>
-	  <tagBase>https://limbo.svn.sourceforge.net/svnroot/limbo/trunk</tagBase>
+	  <tagBase>https://pecia.svn.sourceforge.net/svnroot/pecia/tags</tagBase>
 	  <useReleaseProfile>false</useReleaseProfile>
 	  <arguments>-Prelease</arguments>
 	</configuration>
