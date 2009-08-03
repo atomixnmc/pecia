@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.flotsam.pecia</groupId>
   <artifactId>pecia</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Pecia</name>
   <url>http://pecia.sourceforge.net/</url>
   <developers>
@@ -22,8 +22,8 @@
     compile-time validation of the document structure.
   </description>
   <scm>
-    <connection>scm:svn:https://pecia.svn.sourceforge.net/svnroot/pecia/tags/pecia-1.0</connection>
-    <developerConnection>scm:svn:https://pecia.svn.sourceforge.net/svnroot/pecia/tags/pecia-1.0</developerConnection>
+    <connection>scm:svn:https://pecia.svn.sourceforge.net/svnroot/pecia/trunk</connection>
+    <developerConnection>scm:svn:https://pecia.svn.sourceforge.net/svnroot/pecia/trunk</developerConnection>
   </scm>
   <dependencies>
     <dependency>
